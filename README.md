@@ -28,12 +28,12 @@ CELLxGENE Census cells are downloaded automatically. Two assets you supply, pass
 
 Each stage is a plain module under `src/sae_steering/` that can be run and cached on its own.
 
-1. **Sample cells** — `data.cellxgene_loader.load_disease_and_normal` samples 50,000 cells balanced between malignant and normal states within the matched tissue.
-2. **Extract activations** — `models.scgpt_wrapper.scGPTActivationExtractor` averages the gene-token activations at layer 6 of the 12-layer model into one vector per cell.
-3. **Train the SAE** — `training.train_sae.SAETrainer` trains a Top-K sparse autoencoder (8,192 features, K=32 active per cell, unit-norm decoder columns) on the cached activations.
-4. **Discover features** — `analysis.feature_discovery` ranks features by Cohen's *d* between malignant and normal cells on per-donor mean activations, keeping only those that separate the two within a single platform and are not driven by sequencing platform, library size, or cell-cycle score.
-5. **Check steering validity** — `analysis.steering.validity_check_steering` offsets healthy cells along a feature's decoder direction and requires that their projection onto the malignant–normal axis rise monotonically with strength (Spearman ρ ≥ 0.8).
-6. **Compare to drug response** — `analysis.drug_comparison.full_hypothesis_test` scores each validated feature by Spearman correlation over at least 500 shared genes against Tahoe pseudobulk drug DE, tests against a null of 100 random decoder directions, and applies Benjamini–Hochberg correction within each cohort.
+1. **Sample cells** - `data.cellxgene_loader.load_disease_and_normal` samples 50,000 cells balanced between malignant and normal states within the matched tissue.
+2. **Extract activations** - `models.scgpt_wrapper.scGPTActivationExtractor` averages the gene-token activations at layer 6 of the 12-layer model into one vector per cell.
+3. **Train the SAE** - `training.train_sae.SAETrainer` trains a Top-K sparse autoencoder (8,192 features, K=32 active per cell, unit-norm decoder columns) on the cached activations.
+4. **Discover features** - `analysis.feature_discovery` ranks features by Cohen's *d* between malignant and normal cells on per-donor mean activations, keeping only those that separate the two within a single platform and are not driven by sequencing platform, library size, or cell-cycle score.
+5. **Check steering validity** - `analysis.steering.validity_check_steering` offsets healthy cells along a feature's decoder direction and requires that their projection onto the malignant–normal axis rise monotonically with strength (Spearman ρ ≥ 0.8).
+6. **Compare to drug response** - `analysis.drug_comparison.full_hypothesis_test` scores each validated feature by Spearman correlation over at least 500 shared genes against Tahoe pseudobulk drug DE, tests against a null of 100 random decoder directions, and applies Benjamini–Hochberg correction within each cohort.
 
 ```python
 import numpy as np
@@ -52,7 +52,7 @@ sae = TopKSAE(d_input=512, d_latent=8192, k=32)
 SAETrainer(sae, "data/cache/luad_layer6.npy", "data/cache/sae_luad").train()
 ```
 
-The comparison is cross-context, since steering acts on patient-tissue cells while Tahoe uses cancer cell lines. It benchmarks three drugs of differing mechanism per cohort — docetaxel, oxaliplatin, and erlotinib across five lung lines, and paclitaxel, palbociclib, and tucatinib on two breast lines.
+The comparison is cross-context, since steering acts on patient-tissue cells while Tahoe uses cancer cell lines. It benchmarks three drugs of differing mechanism per cohort: docetaxel, oxaliplatin, and erlotinib across five lung lines, and paclitaxel, palbociclib, and tucatinib on two breast lines.
 
 ## Extending
 
