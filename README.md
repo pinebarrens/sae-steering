@@ -1,4 +1,4 @@
-# sae-steering
+# Externally Validating Steered Disease Features in Single-Cell Foundation Models
 
 Core library for sparse autoencoders on scGPT activations, with steering validation against Tahoe-100M drug signatures.
 
